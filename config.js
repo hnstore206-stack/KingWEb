@@ -91,19 +91,6 @@ const contactConfig = {
     // الكلمات الممنوعة التي لا يمكن إرسالها في الرسالة
     badWords: ["سيء", "شتم", "لعن", "غبي", "كلب", "حمار", "badword", "كس", "امك", "قحبة", "شرموطة", "منيوك", "منيوكة", "اختك"],
 
-    // إعدادات الـ SMTP لإرسال الإيميل
-    // يمكنك استخدام SecureToken من موقع smtpjs.com وهو الأفضل والأكثر أماناً
-    useSecureToken: false, // اجعلها true إذا كنت تريد استخدام Secure Token بدل البيانات
-    smtpSecureToken: "YOUR_SECURE_TOKEN_HERE",
-
-    // إذا لم تستخدم الـ Token، قم بتعبئة بيانات الـ SMTP العادية:
-    smtpHost: "smtp.gmail.com", // لأنك تستخدم جيمل، يجب أن يكون الخادم الخاص بهم
-    smtpUsername: "hnteamstore@gmail.com",
-    smtpPassword: "snij smoq tapi mstp",
-
-    // ملاحظة هامة جداً: جوجل تمنع الإرسال من إيميل مختلف، يجب أن يكون نفس إيميل الـ Username
-    senderEmail: "hnteamstore@gmail.com",
-
     // الإيميل الذي ستصلك الرسائل عليه
     receiveEmail: "ohhking8@gmail.com"
 };

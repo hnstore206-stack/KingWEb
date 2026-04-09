@@ -191,53 +191,40 @@ if (contactForm) {
         submitBtn.disabled = true;
         submitBtn.style.opacity = '0.7';
 
-        let emailParams = {
-            To : contactConfig.receiveEmail,
-            From : contactConfig.senderEmail,
-            Subject : "New Contact Form Message from " + email,
-            Body : `You have received a new message from your website.<br><br><b>Sender Email:</b> ${email}<br><br><b>Message:</b><br>${message}`
-        };
-
-        if (contactConfig.useSecureToken) {
-            emailParams.SecureToken = contactConfig.smtpSecureToken;
-        } else {
-            emailParams.Host = contactConfig.smtpHost;
-            emailParams.Username = contactConfig.smtpUsername;
-            emailParams.Password = contactConfig.smtpPassword;
-        }
-
-        try {
-            if (typeof Email === 'undefined') {
-                throw new Error("مكتبة الإرسال لم يتم تحميلها بشكل صحيح. يرجى التأكد من اتصال الإنترنت أو إيقاف مانع الإعلانات.");
-            }
-
-            // Send Email using SMTP.js
-            Email.send(emailParams).then(
-              response => {
-                  submitBtn.disabled = false;
-                  submitBtn.style.opacity = '1';
-                  if(response === "OK") {
-                      formStatus.textContent = "تم إرسال الرسالة بنجاح!";
-                      formStatus.className = "form-status status-success";
-                      contactForm.reset();
-                  } else {
-                      formStatus.textContent = "حدث خطأ أثناء الإرسال: " + response;
-                      formStatus.className = "form-status status-error";
-                  }
-              }
-            ).catch(err => {
-                submitBtn.disabled = false;
-                submitBtn.style.opacity = '1';
-                formStatus.textContent = "حدث خطأ في الاتصال بالخادم: " + err;
-                formStatus.className = "form-status status-error";
-                console.error(err);
-            });
-        } catch (err) {
+        let emailAddress = contactConfig.receiveEmail || "ohhking8@gmail.com";
+        
+        fetch(`https://formsubmit.co/ajax/${emailAddress}`, {
+            method: "POST",
+            headers: { 
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                _subject: `New Message from ${email}`,
+                email: email,
+                message: message
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
             submitBtn.disabled = false;
             submitBtn.style.opacity = '1';
-            formStatus.textContent = err.message || "حدث خطأ غير متوقع.";
+
+            if (data.success === "true") {
+                formStatus.textContent = "تم إرسال الرسالة بنجاح!";
+                formStatus.className = "form-status status-success";
+                contactForm.reset();
+            } else {
+                formStatus.textContent = "حدث خطأ أثناء الإرسال. تأكد من تفعيل الإيميل.";
+                formStatus.className = "form-status status-error";
+            }
+        })
+        .catch(err => {
+            submitBtn.disabled = false;
+            submitBtn.style.opacity = '1';
+            formStatus.textContent = "حدث خطأ في الاتصال بالشبكة.";
             formStatus.className = "form-status status-error";
             console.error(err);
-        }
+        });
     });
 }
