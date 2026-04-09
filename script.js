@@ -206,26 +206,38 @@ if (contactForm) {
             emailParams.Password = contactConfig.smtpPassword;
         }
 
-        // Send Email using SMTP.js
-        Email.send(emailParams).then(
-          response => {
-              submitBtn.disabled = false;
-              submitBtn.style.opacity = '1';
-              if(response === "OK") {
-                  formStatus.textContent = "تم إرسال الرسالة بنجاح!";
-                  formStatus.className = "form-status status-success";
-                  contactForm.reset();
-              } else {
-                  formStatus.textContent = "حدث خطأ أثناء الإرسال: " + response;
-                  formStatus.className = "form-status status-error";
+        try {
+            if (typeof Email === 'undefined') {
+                throw new Error("مكتبة الإرسال لم يتم تحميلها بشكل صحيح. يرجى التأكد من اتصال الإنترنت أو إيقاف مانع الإعلانات.");
+            }
+
+            // Send Email using SMTP.js
+            Email.send(emailParams).then(
+              response => {
+                  submitBtn.disabled = false;
+                  submitBtn.style.opacity = '1';
+                  if(response === "OK") {
+                      formStatus.textContent = "تم إرسال الرسالة بنجاح!";
+                      formStatus.className = "form-status status-success";
+                      contactForm.reset();
+                  } else {
+                      formStatus.textContent = "حدث خطأ أثناء الإرسال: " + response;
+                      formStatus.className = "form-status status-error";
+                  }
               }
-          }
-        ).catch(err => {
+            ).catch(err => {
+                submitBtn.disabled = false;
+                submitBtn.style.opacity = '1';
+                formStatus.textContent = "حدث خطأ في الاتصال بالخادم: " + err;
+                formStatus.className = "form-status status-error";
+                console.error(err);
+            });
+        } catch (err) {
             submitBtn.disabled = false;
             submitBtn.style.opacity = '1';
-            formStatus.textContent = "حدث خطأ غير متوقع.";
+            formStatus.textContent = err.message || "حدث خطأ غير متوقع.";
             formStatus.className = "form-status status-error";
             console.error(err);
-        });
+        }
     });
 }
